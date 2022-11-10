@@ -52,7 +52,7 @@ def extract_data(logfile):
     lines = [line.strip() for line in open(logfile).readlines() if ':' in line]
     data = [line.split() for line in lines[:102]]
     bar = lines[-1].split()
-    data.append(['free_energy', '1', '0', bar[6], bar[-1]])
+    data.append(['free_energy:', '1', '0', bar[6], bar[-1]])
     
     dframe = pd.DataFrame(data, columns=['direction', 'lambda', 'ddA', 'dA', 'dSig'], 
                             dtype=float)
@@ -110,17 +110,18 @@ def plot_ddG(df, sat_colors, names):
     fe = df.loc[df['direction'] == 'free_energy', 'dA':'hue'].reset_index(drop=True)
     fe['X'] = fe.index * 2 / 10 + 1
     fe['deltaG'] = df['dA'] / df['dA'].max()
+    print(fe)
 
     sns.scatterplot(data=fe, x='X', y='deltaG', hue='hue', palette=sat_colors)
 
     ymin = fe['deltaG'].min() // 1 - 1
     yticks = [-2.5 * x for x in range(int(ymin/2.5) + 1)]
 
-    ax.set_xticks(ticks=df['X'], labels=names, fontsize=10)
+    ax.set_xticks(ticks=fe['X'], labels=names, fontsize=10)
     ax.set_yticks(ticks=yticks, fontsize=10)
-    ax.set_label('\u0394\u0394G \n (kcal/mol)', fontsize=10)
+    ax.set_ylabel('\u0394\u0394G \n (kcal/mol)', fontsize=10)
 
-    xmax = X[-1] + 0.1
+    xmax = fe['X'].iloc[-1] + 0.1
     ax.set_xlim(0.9, xmax)
     ax.set_ylim(-ymin, 1, 1)
 
@@ -130,12 +131,11 @@ def plot_ddG(df, sat_colors, names):
     plt.savefig('ddG_comparison.png', dpi=150)
     return fig
 
-
 df = compile_all_data(systems, names, _default)
 colors = get_colorscheme(n)
 
 paths = plot_paths(df, n, colors)
-#ddG = plot_ddG(df, colors[::3], names)
+ddG = plot_ddG(df, colors[::3], names)
 
-for plot in [paths]:#, ddG]:
+for plot in [paths, ddG]:
     plot.show()
