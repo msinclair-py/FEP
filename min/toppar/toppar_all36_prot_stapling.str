@@ -1,0 +1,120 @@
+* Parameters for stapling
+*
+
+BONDS
+
+CT2      CG1T1    410.00     1.4650  ! CG1T1 CG331 2BTY, 2-butyne, kevo
+CG2R64   S        262.00     1.7410  ! CG2R64 SG311 ! 2SMPYR
+NG2S3    HC       447.80     1.0190  ! NG311  HGPAM1!
+NG2S3    CG331    255.00     1.4630  ! MGU2
+NH3      CG2R64   370.00     1.370   ! CG2R64 NG311 ! 4MC
+CG311    HGA3     322.00     1.1110  ! ALLOW ALI
+CT2      CG2R51   229.63     1.5000  ! PROT his, adm jr., 7/22/89
+CT3      CG2R51   229.63     1.5000  ! PROT his, adm jr., 7/22/89
+NG2R50   HGP1     474.00     1.0100  ! NA G, adm jr. 11/97
+NG2R50   CT3      255.00     1.4630  ! MGU2
+NG2R50   CT2      255.00     1.4630  ! MGU2
+
+ANGLES
+!V(angle) = Ktheta(Theta - Theta0)**2
+!V(Urey-Bradley) = Kub(S - S0)**2
+!Ktheta: kcal/mole/rad**2
+!Theta0: degrees
+!Kub: kcal/mole/A**2 (Urey-Bradley)
+!S0: A
+!
+!      atom types            Ktheta   Theta0   Kub    S0
+CT2      CT2      CE1       32.00    112.20   ! from CE1 CT2 CT3 and CG2D1  CG321  CG321
+CT1      CT2      CE1       32.00    112.20   ! from CE1 CT2 CT3 and CG2D1  CG321  CG321
+CT1      CT2      CG1T1     32.00    112.20   !
+CG1T1    CT2      HA2       47.00    111.50   ! CG1T1 CG331 HGA3    2BTY, 2-butyne, kevo
+CG1T2    CG1T1    CT2       11.00    180.00   ! CG1T2 CG1T1 CG331   PRPY, propene, kevo
+CG2R64   S        CT2       66.00     91.00   ! CG2R64 SG311 CG311 ! 2SMPYR
+NG2R62   CG2R64   S         38.00    116.00   ! NA Ade h2 %%% TEST 113.5 -> 118.9 %%%
+CT2      CT2      NG2S3     27.30    109.70   ! NESM
+NG2S3    CT2      HA2       38.30    105.20   ! NG2S3 CG331 HGA3 ! NESM
+CG2R64   NH3      HC        30.00    109.50   20.00   2.07400
+CT1      CT2      HGA3      34.60    110.10   ! CG321 CG331 HGA3 !
+CT2      NG2S3    CG2R64    50.00    120.00   ! CG201 NG2S1 CG2R6! 2AMP,2-amino pyridine
+CT2      NG2S3    HC        42.30    111.50   ! MMSM
+CG2R64   NG2S3    HC        43.50    113.50   ! 4MC, yxu
+CT2      NH3      CG2R64    50.00    120.00   ! CG201 NG2S1 CG2R6! 2AMP,2-amino pyridine
+NH3      CG2R64   NG2R62    66.00    121.70   ! 4MC
+CG2R64   NG2S3    HGP1      40.00    114.00   ! PMSM
+CG331    NG2S3    CG2R64    50.00    120.00   ! CG201 NG2S1 CG2R6! 2AMP,2-amino pyridine
+CG2R61   CG321    S         53.00    115.20   ! CG2R61 CG321 NG2S1! NZAD,
+CT1     CT3       CG2R51    58.350   113.00   ! ALLOW ARO ! HIS
+HA3     CT3       CG2R51    33.430   109.50   ! ALLOW ARO ! HIS
+NG2R50  NG2R50    NG2R50    110.00   103.00   ! OXAD
+NG2R50  NG2R50    HGP1      30.000   127.00   20.00    2.140000 ! ALLOW ARO
+CT3     CG2R51    CG2R51    45.800   130.00   ! ALLOW ARO ! HIS
+CT3     CG2R51    NG2R50    45.800   124.00   ! ALLOW ARO ! HIS
+HGP1    NG2R50    CG2R51    30.000   125.50   20.00    2.150000 ! ALLOW ARO
+NG2R50   NG2R50   CT2       30.000   125.50   20.00    2.150000 ! ALLOW ARO
+CG2R51   NG2R50   CT2       30.000   125.50   20.00    2.150000 ! ALLOW ARO
+NG2R50   CT2      CT2       58.350   113.00   ! ALLOW ARO ! HIS
+NG2R50   CT2      HA2       33.430   109.50   ! ALLOW ARO ! HIS
+
+! V(dihedral) = Kchi(1 + cos(n(chi) - delta))
+
+DIHEDRALS
+CT2      CT2      CE1      HE1     0.1200  3     0.00 !
+CT2      CT2      CE1      CE2     0.5000  1   180.00 ! from CE2  CE1  CT2  CT3
+CT2      CT2      CE1      CE2     1.3000  3   180.00 ! from CE2  CE1  CT2  CT3
+CT2      CT2      CE1      CE1     0.5000  1   180.00 ! from CE2  CE1  CT2  CT3
+CT2      CT2      CE1      CE1     1.3000  3   180.00 ! from CE2  CE1  CT2  CT3
+CE1      CE1      CT2      HA2     0.1200  3     0.00 !
+CT1      CT2      CE1      HE1     0.1200  3     0.00 !
+CT1      CT2      CE1      CE1     0.5000  1   180.00 !
+CT1      CT2      S        CG2R64  0.1500  3   180.00 ! from  HGA3   CG331  SG311 CG2R63 ! 2SMPYR
+NG2R62   CG2R64   S        CT2     2.1200  2   180.00 ! from  NG2R62 CG2R64 SG311 CG311 ! 2SMPYR
+NG2R62   CG2R64   S        CT2     0.1900  4   180.00 ! from  NG2R62 CG2R64 SG311 CG311 ! 2SMPYR
+S        CG2R64   NG2R62   CG2R64  2.0000  2   180.00 ! from  SG311  CG2R64 NG2R62 CG2R62 ! 4O2SM
+HA2      CT2      S        CG2R64  0.1500  3   180.00 ! from  HGA3   CG331  SG311 CG2R63 ! 2SMPYR
+NG2R62   CG2R64   NH3      CT2     1.4000  1   180.00 ! NG2R62 CG2R64 NG311  CG331  ! 4MC, yxu
+NG2R62   CG2R64   NH3      CT2     1.3000  2   180.00 ! NG2R62 CG2R64 NG311  CG331  ! 4MC, yxu
+NH3      CG2R64   NG2R62   CG2R64  3.1000  2   180.00 ! NG311  CG2R65 NG2R62 CG2R65 ! 4MC, yxu
+NG2R62   CG2R64   NH3      HC      2.4000  2   180.00 ! NG2R62 CG2R65 NG311  HGPAM1 ! 4MC, yxu
+NG2R62   CG2R64   NG2S3    HGP1    2.4000  2   180.00 ! NG2R62 CG2R65 NG311  HGPAM1 ! 4MC, yxu
+NG2R62   CG2R64   NG2S3    CG331   1.4000  1   180.00 ! NG2R62 CG2R64 NG311  CG331  ! 4MC, yxu
+NG2R62   CG2R64   NG2S3    CG331   1.3000  2   180.00 ! NG2R62 CG2R64 NG311  CG331  ! 4MC, yxu
+HGA3     CG331    NG2S3    CG2R64  0.4000  3     0.00 ! HGA3   CG331  NG311  CG2R64 ! 4MC, yxu
+HGA3     CG331    NG2S3    CG2R64  0.0800  6     0.00 ! HGA3   CG331  NG311  CG2R64 ! 4MC, yxu
+CG2R61   CG2R61   CG321    S       0.1190  2     0.00 ! CG2R61 CG2R61 CG321  NG2S1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG2R61   CG321    S       0.1320  4   180.00 ! CG2R61 CG2R61 CG321  NG2S1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG2R61   CG321    S       0.0130  6   180.00 ! CG2R61 CG2R61 CG321  NG2S1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.0150  1     0.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.2980  2     0.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.0760  3   180.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.6190  4     0.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.1480  6     0.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CT1      CT3      CG2R51   NG2R50  0.5300  1   180.00 ! HIS
+CT1      CT3      CG2R51   NG2R50  0.4200  2   180.00 ! HIS
+CT1      CT3      CG2R51   NG2R50  0.3000  3   180.00 ! HIS
+CG2R51   CG2R51   CT3      CT1     2.0400  1     0.00 ! HIS
+CG2R51   CG2R51   CT3      CT1     0.4400  2     0.00 ! HIS
+CG2R51   CG2R51   CT3      CT1     0.1300  3   180.00 ! HIS
+CT3      CG2R51   NG2R50   NG2R50  5.5000  2   180.00 ! OXAD
+NG2R50   CG2R51   CG2R51   CT3     3.0000  2   180.00 ! OXAD
+CT3      CG2R51   CG2R51   HGR52   2.0000  2   180.00 ! HIS
+HA3      CT3      CG2R51   NG2R50  0.1900  3     0.00 ! HIS
+HA3      CT3      CG2R51   CG2R51  0.0000  3     0.00 ! HIS
+NG2R50   NG2R50   NG2R50   CG2R51 14.0000  2   180.00 ! OXAD
+NG2R50   NG2R50   NG2R50   HGP1   14.0000  2   180.00 ! HIS
+NG2R50   CG2R51   CG2R51   NG2R50 14.0000  2   180.00 ! OXAD
+CG2R51   CG2R51   NG2R50   HGP1   14.0000  2   180.00 ! HIS
+HGR52    CG2R51   NG2R50   HGP1    1.0000  2   180.00 ! OXAD
+NG2R50   NG2R50   NG2R50   CT2    14.0000  2   180.00 ! HIS
+NG2R50   NG2R50   CT2      CT2     2.0400  1     0.00 ! HIS
+NG2R50   NG2R50   CT2      CT2     0.4400  2     0.00 ! HIS
+NG2R50   NG2R50   CT2      CT2     0.1300  3   180.00 ! HIS
+NG2R50   NG2R50   CT2      HA2     0.0000  3     0.00 ! HIS
+CG2R51   NG2R50   CT2      CT2     0.5300  1   180.00 ! HIS
+CG2R51   NG2R50   CT2      CT2     0.4200  2   180.00 ! HIS
+CG2R51   NG2R50   CT2      CT2     0.3000  3   180.00 ! HIS
+CG2R51   NG2R50   CT2      HA2     0.0000  3     0.00 ! HIS
+CG2R51   CG2R51   NG2R50   CT2    14.0000  2   180.00 ! HIS
+HGR52    CG2R51   NG2R50   CT2     1.0000  2   180.00 ! OXAD
+
+END
+

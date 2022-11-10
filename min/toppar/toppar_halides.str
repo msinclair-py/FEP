@@ -1,0 +1,145 @@
+* Halide Ions Force Field for CHARMM36m
+* Esam A Orabi and Jose D Faraldo-Gomez, July 2021
+* Please cite  Orabi EA, Ozturk T, Bernhardt N & Faraldo-Gomez JD; J Chem Theor Comput 2021, in press.  
+* Stream this file after reading in protein, lipid, and water .rtf and .prm files
+
+ioformat extended
+bomlev -1
+
+read rtf card append
+* topology for the halide ions
+*
+37
+
+MASS   -1  FLA   18.99800     F	 ! Fluoride ion
+MASS   -1  CLA   35.45000     Cl ! Chloride ion
+MASS   -1  BRA   79.90400     Br ! Bromide  ion
+MASS   -1  IOD  126.90447     I  ! Iodide   ion
+
+DEFA FIRS NONE LAST NONE
+AUTOGENERATE ANGLES DIHEDRALS
+
+RESI FLA      -1.00 ! fluoride Ion
+GROUP
+ATOM FLA  FLA -1.00
+PATCHING FIRST NONE LAST NONE
+
+RESI CLA      -1.00 ! Chloride Ion
+GROUP
+ATOM CLA  CLA -1.00
+PATCHING FIRST NONE LAST NONE
+
+RESI BRA      -1.00 ! Bromide Ion
+GROUP
+ATOM BRA  BRA -1.00
+PATCHING FIRST NONE LAST NONE
+
+RESI IOD      -1.00 ! Iodide Ion
+GROUP
+ATOM IOD  IOD -1.00
+PATCHING FIRST NONE LAST NONE
+
+end
+
+read para card flex append
+* parameters for the halide ions
+*
+
+ATOMS
+MASS   -1  FLA   18.99800     ! Fluoride ion
+MASS   -1  CLA   35.45000     ! Chloride ion
+MASS   -1  BRA   79.90400     ! Bromide  ion
+MASS   -1  IOD  126.90447     ! Iodide   ion
+
+
+NONBONDED nbxmod  5 atom cdiel fshift vatom vdistance vfswitch -
+cutnb 14.0 ctofnb 12.0 ctonnb 10.0 eps 1.0 e14fac 1.0 wmin 1.5
+
+FLA     0.0     -0.040       	1.915    ! Fluoride ion
+CLA     0.0     -0.150       	2.270    ! Chloride ion
+BRA     0.0     -0.220       	2.390    ! Bromide  ion
+IOD     0.0     -0.350       	2.620    ! Iodide   ion
+
+
+NBFIX
+!-----Fluoride-alkali metal ion/protein/lipid interactions-----
+FLA    	HP      -2.500      	2.100    ! F-Aromatics 
+FLA    	NH1     -0.036       	3.765    ! F-Backbone
+FLA    	NH2     -0.038      	3.765    ! F-Asn/Gln
+FLA    	NR1     -0.055       	3.765    ! F-His0
+FLA    	NY      -0.060       	3.765    ! F-Trp
+FLA    	OH1     -0.090       	3.685    ! F-Ser/Thr/Tyr/Asp0/Glu0
+FLA    	OHL     -0.090       	3.685    ! F-Glycolipids
+FLA    	S       -2.500       	3.250    ! F-Cys
+FLA    	HL      -0.015       	2.615    ! F-Choline
+FLA    	CTL5    -0.001       	3.975    ! F-Choline
+FLA    	NH3     -0.185       	3.765    ! F-Lys+
+FLA    	NH3L   	-0.185       	3.765    ! F-Lipid RNH3+ 
+FLA    	NC2     -0.163      	3.765    ! F-Arg
+FLA    	NR3     -0.195       	3.765    ! F-His+
+FLA    	LIT     -0.032      	3.2125   ! F-Li+
+FLA    	SOD     -0.069      	3.32575  ! F-Na+
+FLA    	POT     -0.090       	3.67875  ! F-K+
+FLA    	RUB     -0.100     	3.815    ! F-Rb+
+FLA    	CES     -0.120       	4.015    ! F-Cs+
+
+
+!-----Chloride-alkali metal ion/protein/lipid interactions----- 
+CLA    	HP      -1.000      	2.90     ! Cl-Aromatics
+CLA    	NH1     -0.080       	4.12     ! Cl-Backbone
+CLA    	NH2     -0.080       	4.12     ! Cl-Asn/Gln
+CLA    	NR1     -0.055      	4.12     ! Cl-His0
+CLA    	NY      -0.075       	4.12     ! Cl-Trp
+CLA    	OH1     -0.075       	4.04     ! Cl-Ser/Thr/Tyr/Asp0/Glu0
+CLA    	OHL     -0.075       	4.04     ! Cl-Glycolipids
+CLA    	S       -1.600       	3.80     ! Cl-Cys
+CLA    	CTL5    -0.002       	4.33     ! Cl-Choline
+CLA    	NH3     -0.142       	4.12     ! Cl-Lys+
+CLA    	NH3L   	-0.142       	4.12     ! Cl-Lipid RNH3+
+CLA    	NC2     -0.142       	4.12     ! Cl-Arg
+CLA    	NR3     -0.135       	4.12     ! Cl-His+
+CLA    	LIT     -0.046       	3.5675   ! Cl-Li+
+CLA    	SOD     -0.083875    	3.731    ! Cl-Na+  J. Phys.Chem.Lett. 1:183-189
+CLA    	POT     -0.114236    	4.081    ! Cl-K+   J. Phys.Chem.Lett. 1:183-189
+CLA    	CES     -0.140	   	4.37     ! Cl-Cs+ 
+
+!-----Bromide-alkali metal ion/protein/lipid interactions-----
+BRA    	HP      -0.800       	3.10     ! Br-Aromatics
+BRA    	NH1     -0.110       	4.24     ! Br-Backbone
+BRA    	NH2     -0.105       	4.24     ! Br-Asn/Gln
+BRA    	NR1     -0.080       	4.24     ! Br-His0
+BRA    	NY      -0.110       	4.24     ! Br-Trp
+BRA    	OH1     -0.075       	4.16     ! Br-Ser/Thr/Tyr/Asp0/Glu0
+BRA    	OHL     -0.075       	4.16     ! Br-Glycolipids
+BRA    	S       -1.000       	3.82     ! Br-Cys
+BRA    	CTL5    -0.005      	4.45     ! Br-Choline
+BRA    	NH3     -0.135       	4.24     ! Br-Lys+
+BRA    	NH3L    -0.135      	4.24     ! Br-Lipid RNH3+
+BRA    	NC2     -0.141       	4.24     ! Br-Arg
+BRA    	NR3     -0.120       	4.24     ! Br-His+
+BRA    	LIT     -0.048       	3.6875   ! Br-Li+
+BRA    	POT     -0.148       	4.15375  ! Br-K+
+BRA    	RUB     -0.176       	4.29     ! Br-Rb+
+BRA    	CES     -0.168       	4.49     ! Br-Cs+
+
+!-----Iodide-alkali metal ion/protein/lipid interactions-----
+IOD    	HP     	-0.700      	3.25     ! I-Aromatics
+IOD    	NH1     -0.077       	4.47     ! I-Backbone
+IOD    	NH2     -0.100       	4.47     ! I-Asn/Gln
+IOD    	NR1     -0.080       	4.47     ! I-His0
+IOD    	NY      -0.115       	4.47     ! I-Trp
+IOD    	OH1     -0.055       	4.39     ! I-Ser/Thr/Tyr/Asp0/Glu0
+IOD    	OHL     -0.055       	4.39     ! I-Glycolipids
+IOD    	S       -1.100       	3.95     ! I-Cys
+IOD    	CTL5    -0.022       	4.68     ! I-Choline
+IOD    	NH3     -0.120       	4.47     ! I-Lys+
+IOD    	NH3L    -0.120       	4.47     ! I-Lipid RNH3+
+IOD    	NC2     -0.116       	4.47     ! I-Arg
+IOD    	NR3     -0.090       	4.47     ! I-His+
+IOD    	SOD     -0.087       	4.03075  ! I-Na+
+IOD    	POT     -0.155       	4.38375  ! I-K+
+IOD    	RUB     -0.192       	4.52     ! I-Rb+
+IOD    	CES     -0.180       	4.72     ! I-Cs+
+
+END
+return
