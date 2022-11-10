@@ -27,7 +27,7 @@ Steps to get absolute FEP going:
 	- Run join.py to merge all FEP runs so that ParseFEP can analyze.
     - Run plotFEP.py to generate plots of a single or even multiple FEP simulations
 
-Additional caveats, notes and thoughts:
+6. Additional caveats, notes and thoughts:
     - Modify min.conf to include equilibration location and cgenff parameters (.str)
     - Modify .conf files in run/ folder as necessary
     - Entropy modification is unneccessary since it is negligibly small and may be within FEP error

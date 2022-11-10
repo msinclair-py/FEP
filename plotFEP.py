@@ -16,25 +16,36 @@ parser.add_argument('-s', '--systems', dest='systems', help='Space delimited str
                     which corresponds to all systems to be analyzed. Note that each\
                     system ought to be contained in the `filepath` directory using\
                     the standard FEP template directory structure.')
+parser.add_argument('--simple', dest='_default', help='Set this flag to if you are \
+                    not plotting from the traditional FEP architecture. E.g. if the \
+                    ParseFEP.log file is in just a bare directory.', action='store_false')
+parser.set_defaults(_default=True)
 
 args = parser.parse_args()
 filepath = args.filepath
 names = args.systems.split(' ')
-systems = [os.join(filepath, system) for system in names]
+_default = args._default
+
+systems = [os.path.join(filepath, system) for system in names]
 n = len(systems)
 
 assert n < 11, f'ERROR: colormap only contains 10 color combinations \
                     but you provided {n} systems!'
 
-def compile_all_data(systems, names):
+def compile_all_data(systems, names, _default):
+    if _default:
+        dest = 'run/results/ParseFEP.log'
+    else:
+        dest = 'ParseFEP.log'
+
     df = pd.DataFrame()
     for i, (system, name) in enumerate(zip(systems, names)):
-        temp = extract_data(f'{system}/run/results/ParseFEP.log')
+        temp = extract_data(f'{system}/{dest}')
         temp['system'] = name
         df = pd.concat([df, temp])
     
     df['hue'] = df['system'] + '-' + df['direction']
-    return df
+    return df.reset_index(drop=True)
 
 
 def extract_data(logfile):
@@ -43,9 +54,9 @@ def extract_data(logfile):
     bar = lines[-1].split()
     data.append(['free_energy', '1', '0', bar[6], bar[-1]])
     
-    dframe = pd.DataFrame(data, columns=['direction', 'lambda', 'ddA', 'dA', 'dSig'])
-    dframe['direction'] = df['direction'].str[:-1]
-    dframe.loc['lambda':'dSig'] = dframe.loc['lambda':'dSig'].astype(float)
+    dframe = pd.DataFrame(data, columns=['direction', 'lambda', 'ddA', 'dA', 'dSig'], 
+                            dtype=float)
+    dframe['direction'] = dframe['direction'].str[:-1]
 
     return dframe
 
@@ -66,7 +77,7 @@ def get_colorscheme(n):
     colorscheme = [None] * 3 * n
     colorscheme[::3] = sat_colors[:n]
     colorscheme[1::3] = light_cols[:n]
-    colorscheme[2::3] = [' '] * n
+    colorscheme[2::3] = ['white'] * n
 
     return colorscheme
 
@@ -89,25 +100,27 @@ def plot_paths(dframe, n, colors):
     frame = legend.get_frame()
     frame.set_facecolor('xkcd:light grey')
 
-    plt.savefig('dG_lambda_forw/back.png', dpi=150)
+    plt.savefig('dG_lambda_forw_back.png', dpi=150)
     return fig
 
 
-def plot_ddG(df, sat_colors):
+def plot_ddG(df, sat_colors, names):
     fig, ax = plt.subplots(1,1, figsize=(2,2))
 
-    fe = df[df'direction'] == 'free_energy'].reset_index(drop=True)
+    fe = df.loc[df['direction'] == 'free_energy', 'dA':'hue'].reset_index(drop=True)
     fe['X'] = fe.index * 2 / 10 + 1
     fe['deltaG'] = df['dA'] / df['dA'].max()
 
-    sns.scatterplot(data=df_fe, x='X', y='deltaG', hue='hue', palette=sat_colors)
+    sns.scatterplot(data=fe, x='X', y='deltaG', hue='hue', palette=sat_colors)
 
-    ax.set_xticks(ticks=X, labels=, fontsize=10)
-    ax.set_yticks(ticks=, labels=, fontsize=10)
+    ymin = fe['deltaG'].min() // 1 - 1
+    yticks = [-2.5 * x for x in range(int(ymin/2.5) + 1)]
+
+    ax.set_xticks(ticks=df['X'], labels=names, fontsize=10)
+    ax.set_yticks(ticks=yticks, fontsize=10)
     ax.set_label('\u0394\u0394G \n (kcal/mol)', fontsize=10)
 
     xmax = X[-1] + 0.1
-    ymin = (min(delta_G) // 1) - 1
     ax.set_xlim(0.9, xmax)
     ax.set_ylim(-ymin, 1, 1)
 
@@ -118,11 +131,11 @@ def plot_ddG(df, sat_colors):
     return fig
 
 
-df = compile_all_data(systems, names)
+df = compile_all_data(systems, names, _default)
 colors = get_colorscheme(n)
 
 paths = plot_paths(df, n, colors)
-ddG = plot_ddG(df, colors[::3])
+#ddG = plot_ddG(df, colors[::3], names)
 
-for plot in [paths, ddG]:
+for plot in [paths]:#, ddG]:
     plot.show()
