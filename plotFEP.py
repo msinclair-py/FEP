@@ -84,10 +84,11 @@ def get_colorscheme(n):
 
 def plot_paths(dframe, n, colors):
     fig, ax = plt.subplots(1,1, figsize=(5,5))
-    style = ['-', '--', ''] * n
+    style = ['-']*51 + ['--']*51 + ['x']
+    style = style * n
     
-    sns.lineplot(data=dframe, x='lambda', y='dA', hue='hue', style='hue',
-                    ax=ax, palette=colors, style_order=style)
+    sns.lineplot(data=dframe, x='lambda', y='dA', hue='hue', style=style,
+                    ax=ax, palette=colors)
     
     ax.set_xlabel('\u03BB', fontsize=20)
     ax.set_ylabel('\u0394G$_{binding}$ (kcal/mol)', fontsize=20)
@@ -96,7 +97,18 @@ def plot_paths(dframe, n, colors):
     ymax = ((df['dA'].max() // 10) + 1) * 10
     ax.set_ylim(ymin, ymax)
     
-    legend = plt.legend(bbox_to_anchor=(1, 1.05), prop={'size': 12})
+    h, l = ax.get_legend_handles_labels()
+    labels = []
+    for label in l[:-3]:
+        if 'free_energy' in label:
+            lab = f'{label.split("-")[0].capitalize()} \u0394G = '
+            lab += f'{dframe.loc[dframe["hue"] == label, "dA"].values[0]:.2f}'
+        else:
+            lab = ' '.join([x.capitalize() for x in label.split('-')])
+
+        labels.append(lab)
+
+    legend = plt.legend(h[:-3], labels, bbox_to_anchor=(1, 1.05), prop={'size': 12})
     frame = legend.get_frame()
     frame.set_facecolor('xkcd:light grey')
 
@@ -110,7 +122,6 @@ def plot_ddG(df, sat_colors, names):
     fe = df.loc[df['direction'] == 'free_energy', 'dA':'hue'].reset_index(drop=True)
     fe['X'] = fe.index * 2 / 10 + 1
     fe['deltaG'] = df['dA'] / df['dA'].max()
-    print(fe)
 
     sns.scatterplot(data=fe, x='X', y='deltaG', hue='hue', palette=sat_colors)
 
