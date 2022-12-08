@@ -23,7 +23,11 @@ parser.set_defaults(_default=True)
 
 args = parser.parse_args()
 filepath = args.filepath
-names = args.systems.split(' ')
+try:
+    names = args.systems.split(' ')
+except AttributeError:
+    names = ''
+
 _default = args._default
 
 systems = [os.path.join(filepath, system) for system in names]
@@ -83,7 +87,7 @@ def get_colorscheme(n):
 
 
 def plot_paths(dframe, n, colors):
-    fig, ax = plt.subplots(1,1, figsize=(5,5))
+    fig, ax = plt.subplots(1,1, figsize=(8,5))
     style = ['-']*51 + ['--']*51 + ['x']
     style = style * n
     
@@ -112,6 +116,7 @@ def plot_paths(dframe, n, colors):
     frame = legend.get_frame()
     frame.set_facecolor('xkcd:light grey')
 
+    plt.tight_layout()
     plt.savefig('dG_lambda_forw_back.png', dpi=150)
     return fig
 
@@ -139,6 +144,7 @@ def plot_ddG(df, sat_colors, names):
     for axis in ['bottom', 'left']:
         ax.spines[axis].set_linewidth(2)
 
+    plt.tight_layout()
     plt.savefig('ddG_comparison.png', dpi=150)
     return fig
 
