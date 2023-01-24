@@ -39,7 +39,7 @@ assert n < 11, f'ERROR: colormap only contains 10 color combinations \
 df = compile_all_data(systems, names, _default)
 colors = get_colorscheme(n)
 
-paths = plot_paths(df, n, colors)
-ddG = plot_ddG(df, n, colors[::3], names)
+plot_paths(df, n, colors)
+ddG = plot_ddG(df, n, names, colors[::3])
 
 plt.show()

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from matplotlib.patches import Rectangle
 
 def compile_all_data(systems, names, _default):
     if _default:
@@ -59,12 +60,18 @@ def plot_paths(dframe, n, colors):
     fig, ax = plt.subplots(1,1, figsize=(8,5))
     style = ['-']*51 + ['--']*51 + ['x']
     style = style * n
-    
-    g = sns.lineplot(data=dframe, x='lambda', y='dA', hue='hue', style=style,
-                    ax=ax, palette=colors)
+
+    ord_df = dframe[dframe['direction'] == 'free_energy'].loc[:,['dA', 'system']]
+    order = ord_df.sort_values(by='dA').loc[:, 'system']
+    hue_order = np.array([[f'{o}-{direction}' 
+                    for direction in ['forward', 'backward', 'free_energy']] 
+                    for o in order]).flatten()
+
+    g = sns.lineplot(data=dframe, x='lambda', y='dA', hue='hue', hue_order=hue_order,
+                    style=style, ax=ax, palette=colors)
     
     ax.set_xlabel('\u03BB', fontsize=20)
-    ax.set_ylabel('\u0394G$_{binding}$ (kcal/mol)', fontsize=20)
+    ax.set_ylabel('\u0394G$_{unbinding}$ (kcal/mol)', fontsize=20)
 
     ymin = ((dframe['dA'].min() // 10) - 1) * 10
     ymax = ((dframe['dA'].max() // 10) + 1) * 10
@@ -74,12 +81,15 @@ def plot_paths(dframe, n, colors):
     labels = []
     for label in l[:-3]:
         if 'free_energy' in label:
-            lab = f'{label.split("-")[0].capitalize()} \u0394G = '
+            lab = f'{label.split("-")[0]} \u0394G = '
             lab += f'{dframe.loc[dframe["hue"] == label, "dA"].values[0]:.2f}'
         else:
-            lab = ' '.join([x.capitalize() for x in label.split('-')])
+            lab = ' '.join([x for x in label.split('-')])
 
         labels.append(lab)
+    
+    for i in range(len(h)//3 - 1):
+        h[i*3 + 2] = Rectangle((0,0), 1, 1, fill=False, edgecolor='none', visible=False)
 
     lgd = plt.legend(h[:-3], labels, bbox_to_anchor=(1, 1.05), 
                  prop={'size': 12}, fancybox=True)
@@ -90,23 +100,25 @@ def plot_paths(dframe, n, colors):
                 bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 
-def plot_ddG(df, n, sat_colors, names):
+def plot_ddG(df, n, names, sat_colors):
     fig = plt.figure(figsize=(n+2, n))
     spec = gridspec.GridSpec(ncols=n+1, nrows=1, figure=fig)
     ax1 = fig.add_subplot(spec[0, :n])
     ax2 = fig.add_subplot(spec[0, n])
 
-    fe = df.loc[df['direction'] == 'free_energy', 'dA':'hue'].reset_index(drop=True)
-    fe['X'] = fe.index * 2 / 10 + 1
+    fe = df.loc[df['direction'] == 'free_energy', 'dA':'system'].reset_index(drop=True)
     fe['deltaG'] = fe['dA'] - fe['dA'].min()
     fe.loc[fe['deltaG'] != 0., 'deltaG'] *= -1
+    fe = fe.sort_values(by='deltaG', ascending=False).reset_index(drop=True)
+    fe['X'] = fe.index * 2 / 10 + 1
 
-    sns.scatterplot(data=fe, x='X', y='deltaG', hue='hue', palette=sat_colors, ax=ax1)
+    sns.scatterplot(data=fe, x='X', y='deltaG', hue='system', 
+                        palette=sat_colors, ax=ax1)
 
     ymin = fe['deltaG'].min() // 1 - 1
     yticks = [-2.5 * x for x in range(int(ymin/2.5) + 1)]
-
-    ax1.set_xticks(ticks=fe['X'], labels=[n.capitalize() for n in names], 
+    
+    ax1.set_xticks(ticks=fe['X'], labels=names, 
                     rotation=45, fontsize=10)
     ax1.set_yticks(ticks=yticks, fontsize=10)
     ax1.set_ylabel('\u0394\u0394G \n (kcal/mol)', fontsize=10)
