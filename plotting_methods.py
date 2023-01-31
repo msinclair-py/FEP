@@ -82,7 +82,7 @@ def plot_paths(dframe, n, colors):
     for label in l[:-3]:
         if 'free_energy' in label:
             lab = f'{label.split("-")[0]} \u0394G = '
-            lab += f'{dframe.loc[dframe["hue"] == label, "dA"].values[0]:.2f}'
+            lab += f'{dframe.loc[dframe["hue"] == label, "dA"].values[0]:.2f} kcal/mol'
         else:
             lab = ' '.join([x for x in label.split('-')])
 
