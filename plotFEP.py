@@ -23,6 +23,10 @@ parser.set_defaults(_default=True)
 
 args = parser.parse_args()
 filepath = args.filepath
+
+if filepath[-1] == '/':
+    filepath = filepath[:-1]
+
 try:
     names = args.systems.split(' ')
 except AttributeError:

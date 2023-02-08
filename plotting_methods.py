@@ -5,6 +5,12 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from matplotlib.patches import Rectangle
+from matplotlib import rc
+
+rc('axes', linewidth=1.5)
+rc('font', weight='bold')
+plt.rcParams['axes.labelweight'] = 'bold'
+plt.rcParams['axes.titleweight'] = 'bold'
 
 def compile_all_data(systems, names, _default):
     if _default:
@@ -101,10 +107,10 @@ def plot_paths(dframe, n, colors):
 
 
 def plot_ddG(df, n, names, sat_colors):
-    fig = plt.figure(figsize=(n+2, n))
-    spec = gridspec.GridSpec(ncols=n+1, nrows=1, figure=fig)
-    ax1 = fig.add_subplot(spec[0, :n])
-    ax2 = fig.add_subplot(spec[0, n])
+    size = (2*n, 2*n)
+    fig = plt.figure(figsize=size)
+    spec = gridspec.GridSpec(ncols=1, nrows=1, figure=fig)
+    ax1 = fig.add_subplot(spec[0, :])
 
     fe = df.loc[df['direction'] == 'free_energy', 'dA':'system'].reset_index(drop=True)
     fe['deltaG'] = fe['dA'] - fe['dA'].min()
@@ -113,8 +119,8 @@ def plot_ddG(df, n, names, sat_colors):
     fe['X'] = fe.index * 2 / 10 + 1
 
     sns.scatterplot(data=fe, x='X', y='deltaG', hue='system', 
-                        palette=sat_colors, ax=ax1)
-
+                        palette=sat_colors, ax=ax1, legend=False)
+    
     ymin = fe['deltaG'].min() // 1 - 1
     yticks = [-2.5 * x for x in range(int(ymin/2.5) + 1)]
     
@@ -123,13 +129,7 @@ def plot_ddG(df, n, names, sat_colors):
     ax1.set_yticks(ticks=yticks, fontsize=10)
     ax1.set_ylabel('\u0394\u0394G \n (kcal/mol)', fontsize=10)
     ax1.set_xlabel('')
-
-    h, l = ax1.get_legend_handles_labels()
-    l = [f'{en:.2f} kcal/mol' for en in fe['deltaG']]
-    ax1.get_legend().remove()
-    lgd = ax2.legend(h, l, title='Rel. Binding Free Energy', fancybox=True,
-                    loc='upper left', bbox_to_anchor=(-0.05,1.))
-    ax2.axis('off')
+    ax1.set_title('Rel. Binding Free Energy', fontsize=15)
 
     xmax = fe['X'].iloc[-1] + 0.1
     ax1.set_xlim(0.9, xmax)
@@ -137,5 +137,18 @@ def plot_ddG(df, n, names, sat_colors):
 
     sns.despine(trim=True)
 
+    x = np.linspace(fe['X'][0], fe['X'][n-1], 50)
+    dash1, = ax1.plot(x, [0]*50, color='black')
+    dash1.set_dashes([2, 2, 10, 2])
+    ax1.text((fe['X'][n-1] - 1)/2 + 1., 0.2, '0 kcal/mol', horizontalalignment='center')
+
+    for k in range(1, n):
+        y_k = fe['deltaG'][k]
+        y = np.linspace(0, y_k, 50)
+        dash, = ax1.plot([fe['X'][k]]*50, y, color='black')
+        dash.set_dashes([4,4])
+        ax1.text(fe['X'][k]+0.01, y_k/2, f'{fe["deltaG"][k]:.2f} kcal/mol',
+                    rotation=90, verticalalignment='center')
+
     plt.tight_layout()
-    plt.savefig('ddG_comparison.png', dpi=150, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig('ddG_comparison.png', dpi=200)
