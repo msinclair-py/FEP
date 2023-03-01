@@ -19,7 +19,7 @@ def compile_all_data(systems, names, _default):
         dest = 'ParseFEP.log'
 
     df = pd.DataFrame()
-    for i, (system, name) in enumerate(zip(systems, names)):
+    for (system, name) in zip(systems, names):
         temp = extract_data(f'{system}/{dest}')
         temp['system'] = name
         df = pd.concat([df, temp])
@@ -34,8 +34,8 @@ def extract_data(logfile):
     bar = lines[-1].split()
     data.append(['free_energy:', '1', '0', bar[6], bar[-1]])
     
-    dframe = pd.DataFrame(data, columns=['direction', 'lambda', 'ddA', 'dA', 'dSig'], 
-                            dtype=float)
+    dframe = pd.DataFrame(data, columns=['direction', 'lambda', 'ddA', 'dA', 'dSig'], dtype=float)
+    
     dframe['direction'] = dframe['direction'].str[:-1]
 
     return dframe
@@ -69,15 +69,27 @@ def plot_paths(dframe, n, colors):
 
     ord_df = dframe[dframe['direction'] == 'free_energy'].loc[:,['dA', 'system']]
     order = ord_df.sort_values(by='dA').loc[:, 'system']
+
     hue_order = np.array([[f'{o}-{direction}' 
                     for direction in ['forward', 'backward', 'free_energy']] 
                     for o in order]).flatten()
+    
+    # reverse lambda direction and subtract `dA` values by overall delta G. This is done
+    # to obtain the paths for binding rather than unbinding (simply the reverse of what we
+    # have simulated)
+    dframe['lambda'] = 1. - dframe['lambda']
+
+    fes = dframe[dframe['direction'] == 'free_energy']
+    for sys in fes['system']:
+        slc = dframe[(dframe['system'] == sys) & (dframe['direction'] != 'free_energy')]
+        slc['dA'] = slc['dA'] - dframe[(dframe['system'] == sys) & (dframe['direction'] == 'free_energy')].loc[:,'dA'].iloc[0]
+        dframe[(dframe['system'] == sys) & (dframe['direction'] != 'free_energy')] = slc
 
     g = sns.lineplot(data=dframe, x='lambda', y='dA', hue='hue', hue_order=hue_order,
                     style=style, ax=ax, palette=colors)
     
     ax.set_xlabel('\u03BB', fontsize=20)
-    ax.set_ylabel('\u0394G$_{unbinding}$ (kcal/mol)', fontsize=20)
+    ax.set_ylabel('\u0394G$_{binding}$ (kcal/mol)', fontsize=20)
 
     ymin = ((dframe['dA'].min() // 10) - 1) * 10
     ymax = ((dframe['dA'].max() // 10) + 1) * 10
@@ -88,7 +100,7 @@ def plot_paths(dframe, n, colors):
     for label in l[:-3]:
         if 'free_energy' in label:
             lab = f'{label.split("-")[0]} \u0394G = '
-            lab += f'{dframe.loc[dframe["hue"] == label, "dA"].values[0]:.2f} kcal/mol'
+            lab += f'-{dframe.loc[dframe["hue"] == label, "dA"].values[0]:.2f} kcal/mol'
         else:
             lab = ' '.join([x for x in label.split('-')])
 
@@ -102,7 +114,7 @@ def plot_paths(dframe, n, colors):
     frame = lgd.get_frame()
     frame.set_facecolor('xkcd:light grey')
 
-    plt.savefig('dG_lambda_forw_back.png', dpi=150, 
+    plt.savefig('dG_lambda_forw_back.png', dpi=250, 
                 bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 
@@ -129,7 +141,7 @@ def plot_ddG(df, n, names, sat_colors):
     ax1.set_yticks(ticks=yticks, fontsize=10)
     ax1.set_ylabel('\u0394\u0394G \n (kcal/mol)', fontsize=10)
     ax1.set_xlabel('')
-    ax1.set_title('Rel. Binding Free Energy', fontsize=15)
+    ax1.set_title('Binding Free Energy Difference(s)', fontsize=15)
 
     xmax = fe['X'].iloc[-1] + 0.1
     ax1.set_xlim(0.9, xmax)
@@ -151,4 +163,4 @@ def plot_ddG(df, n, names, sat_colors):
                     rotation=90, verticalalignment='center')
 
     plt.tight_layout()
-    plt.savefig('ddG_comparison.png', dpi=200)
+    plt.savefig('ddG_comparison.png', dpi=250)

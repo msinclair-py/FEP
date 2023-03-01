@@ -36,7 +36,7 @@ Workflow for running, analyzing and plotting Free Energy Perturbation (FEP) simu
         that the script takes and how to run it.
 
 6. Additional caveats, notes and thoughts:
-    - Modify min.conf to include equilibration location and cgenff parameters (.str).
+    - Modify min.conf to include equilibration location and cgenff/antechamber/QM-derived parameters (.str).
     - Modify .conf files in run/ folder as necessary.
     - Entropy modification is generally unneccessary since it is negligibly small and may be within FEP error.
     - Error term will shift delta G values, but shouldn't affect delta delta G for comparing different FEP runs.
