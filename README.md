@@ -2,7 +2,7 @@
 Workflow for running, analyzing and plotting Free Energy Perturbation (FEP) simulations using the NAMD MD engine.
 
 1. Navigate to ini/
-	- Ensure your input system is equilibrated and solvated (~30ns).
+	- Ensure your input system is already equilibrated (>= 25ns).
     - Run `ini_0.tcl` script to generate a second copy of your ligand in the bulk solvent. Note that you will need 
         to update this script to ensure the ligand placement is appropriate for your system (not outside the box, at
         least 2 times your non-bonded interaction cutoff away from protein, etc.)
@@ -27,11 +27,12 @@ Workflow for running, analyzing and plotting Free Energy Perturbation (FEP) simu
     - All sample jobscripts are configured for SGE job scheduler to run on a DGX2 machine, but can easily be modified for SLURM
         or other computational architectures.
 
-5. Post running:
+5. To analyze data:
 	- Run check.py to ensure that everything has ran to completion.
 	- Run join.py to merge all FEP runs so that ParseFEP can analyze.
-    - Using the Analyze FEP Simulation module in VMD>Extensions>Analysis, set the temperature accordingly, Gram-Charlier expansion
-        order to 0 and attach your forward and backward fep files for analysis, selecting BAR estimator for error estimation.
+    - Run process.tcl to merge the data from the forward and backward paths. Under the hood this is simply calling the Analyze FEP
+        Simulation module in VMD (Extensions > Analysis > Analyze FEP Simulation). By default Gram-Charlier expansion order is set
+        to 0 and the Bennet Acceptance Ratio (BAR) estimator is used for error estimation.
     - Run plotFEP.py to generate plots of a single or even multiple FEP simulations. See ArgumentParser in plotFEP for arguments
         that the script takes and how to run it.
 

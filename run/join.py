@@ -1,36 +1,24 @@
+#!/usr/bin/env python
+import os, shutil
+from tqdm import trange
 
-import numpy as np
-import math  as m
+N = 50 # number of FEP windows
 
-N = 50
-OUTPUT1  =  open("backward.fepout"      , "w")
-OUTPUT2  =  open("forward.fepout"       , "w")
+try:
+    shutil.copyfile('b0/b0.fepout', 'backward.fepout')
+    shutil.copyfile('f0/f0.fepout', 'forward.fepout')
+except:
+    pass
 
-for i in range(0, 50):
-	input1 = "./b" + str(i) + "/b" + str(i) + ".fepout"
-	INPUT1 = open(input1, "r")
-	lines    = INPUT1.readlines()
-	for j in range(0, len(lines)):
-		line = lines[j]
-		if i > 0:
-			if j > 1:
-				OUTPUT1.write('{}  '.format(line))
-		else:
-			OUTPUT1.write('{}  '.format(line))
-	print (i)
+def join_files(direction: str) -> None:
+    f = open(f'{direction}.fepout', 'a')
+    d = direction[0]
 
-OUTPUT1.close()
+    for i in trange(1, 50):
+        tmp = open(f'{d}{i}/{d}{i}.fepout', 'r').readlines()[2:]
 
-for i in range(0, 50):
-	input2 = "./f" + str(i) + "/f" + str(i) + ".fepout"
-	INPUT2 = open(input2, "r")
-	lines    = INPUT2.readlines()
-	for j in range(0, len(lines)):
-		line = lines[j]
-		if i > 0:
-			if j > 1:
-				OUTPUT2.write('{}  '.format(line))
-		else:
-			OUTPUT2.write('{}  '.format(line))
-	print (i)
-OUTPUT2.close()
+        for line in tmp:
+            f.write(line)
+
+join_files('backward')
+join_files('forward')
